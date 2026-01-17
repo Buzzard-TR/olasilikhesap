@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olasılık ve Yüzde Hesaplayıcı</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box; /* Padding taşmasını önler */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--primary-color);
+            font-weight: bold;
+            display: none; /* Başlangıçta gizli */
+        }
+
+        footer {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📊 Olasılık Hesaplama Aracı</h1>
+
+    <div class="container">
+        
+        <div class="card">
+            <h2>1. Bir Sayının Yüzdesi</h2>
+            <div class="input-group">
+                <label>Sayı (Tümü):</label>
+                <input type="number" id="num1" placeholder="Örn: 500">
+            </div>
+            <div class="input-group">
+                <label>Yüzde Oranı (%):</label>
+                <input type="number" id="percent1" placeholder="Örn: 20">
+            </div>
+            <button onclick="calculateSimplePercent()">Hesapla</button>
+            <div id="result1" class="result"></div>
+        </div>
+
+        <div class="card">
+            <h2>2. Bu Sayı Yüzde Kaçtır?</h2>
+            <div class="input-group">
+                <label>Parça Sayı:</label>
+                <input type="number" id="part" placeholder="Örn: 25">
+            </div>
+            <div class="input-group">
+                <label>Bütün Sayı:</label>
+                <input type="number" id="whole" placeholder="Örn: 100">
+            </div>
+            <button onclick="calculateRatio()">Hesapla</button>
+            <div id="result2" class="result"></div>
+        </div>
+
+        <div class="card">
+            <h2>3. Olasılık Hesaplayıcı</h2>
+            <div class="input-group">
+                <label>İstenen Durum Sayısı:</label>
+                <input type="number" id="eventCount" placeholder="Örn: 3 (Kırmızı Toplar)">
+            </div>
+            <div class="input-group">
+                <label>Toplam Olası Durum:</label>
+                <input type="number" id="totalOutcomes" placeholder="Örn: 10 (Tüm Toplar)">
+            </div>
+            <button onclick="calculateProbability()">Olasılığı Bul</button>
+            <div id="result3" class="result"></div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>GitHub Pages ile yayınlanmıştır.</p>
+    </footer>
+
+    <script>
+        // Sonuç gösterme fonksiyonu
+        function showResult(elementId, text) {
+            const el = document.getElementById(elementId);
+            el.style.display = 'block';
+            el.innerHTML = text;
+        }
+
+        // 1. Hesaplama: Sayının Yüzdesi
+        function calculateSimplePercent() {
+            const num = parseFloat(document.getElementById('num1').value);
+            const percent = parseFloat(document.getElementById('percent1').value);
+
+            if (isNaN(num) || isNaN(percent)) {
+                showResult('result1', "Lütfen geçerli sayılar giriniz.");
+                return;
+            }
+
+            const res = (num * percent) / 100;
+            showResult('result1', `${num} sayısının %${percent}'i: <br> <span style="font-size:1.5em">${res}</span>`);
+        }
+
+        // 2. Hesaplama: Yüzde Kaç?
+        function calculateRatio() {
+            const part = parseFloat(document.getElementById('part').value);
+            const whole = parseFloat(document.getElementById('whole').value);
+
+            if (isNaN(part) || isNaN(whole) || whole === 0) {
+                showResult('result2', "Lütfen geçerli sayılar giriniz (Bütün 0 olamaz).");
+                return;
+            }
+
+            const res = (part / whole) * 100;
+            showResult('result2', `${part}, ${whole} sayısının: <br> <span style="font-size:1.5em">%${res.toFixed(2)}</span>'sidir.`);
+        }
+
+        // 3. Hesaplama: Olasılık
+        function calculateProbability() {
+            const event = parseFloat(document.getElementById('eventCount').value);
+            const total = parseFloat(document.getElementById('totalOutcomes').value);
+
+            if (isNaN(event) || isNaN(total) || total === 0) {
+                showResult('result3', "Lütfen geçerli değerler giriniz.");
+                return;
+            }
+
+            const probPercent = (event / total) * 100;
+            const probDecimal = event / total;
+
+            showResult('result3', 
+                `Gerçekleşme Olasılığı: <br>` +
+                `Yüzde: <strong>%${probPercent.toFixed(2)}</strong><br>` +
+                `Ondalık: <strong>${probDecimal.toFixed(4)}</strong>`
+            );
+        }
+    </script>
+</body>
+</html>
